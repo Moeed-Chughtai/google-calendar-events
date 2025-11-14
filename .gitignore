@@ -1,0 +1,19 @@
+# Google API credentials
+credentials.json
+token.json
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Output files
+calendar_events.json
+token.json
