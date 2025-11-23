@@ -1,6 +1,25 @@
 # Google Calendar Event Fetcher
 
-This script fetches events from all your Google Calendars for a configurable number of days (including today) and formats them into a structured JSON file.
+A Python script that fetches events from all your Google Calendars and exports them to a structured JSON file. Perfect for integrating calendar data into your applications, dashboards, or automation workflows.
+
+## Features
+
+- ✅ Fetches events from **all** your Google Calendars
+- ✅ Configurable date range (set via environment variable)
+- ✅ Handles both timed events and all-day events
+- ✅ Splits multi-day events across multiple days
+- ✅ Clean, structured JSON output
+- ✅ Simple setup with environment variables
+- ✅ OAuth 2.0 authentication (one-time setup)
+
+## Use Cases
+
+- Build custom calendar dashboards
+- Integrate calendar data into other applications
+- Automate calendar-based workflows
+- Export calendar data for analysis
+- Sync calendar events to other systems
+
 
 ## Setup Instructions
 
