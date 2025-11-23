@@ -1,6 +1,6 @@
 # Google Calendar Event Fetcher
 
-This script fetches events from all your Google Calendars for the next 7 days (including today) and formats them into a structured JSON file.
+This script fetches events from all your Google Calendars for a configurable number of days (including today) and formats them into a structured JSON file.
 
 ## Setup Instructions
 
@@ -23,9 +23,25 @@ pip install -r requirements.txt
    - Click "Create Credentials" > "OAuth client ID"
    - Choose "Desktop app" as the application type
    - Download the credentials JSON file
-5. Rename the downloaded file to `credentials.json` and place it in this directory
 
-### 3. Run the Script
+### 3. Configure Environment Variables
+
+Create a `.env` file in the project directory with the required configuration:
+
+```env
+# Number of days to fetch events for (required)
+DAYS_TO_FETCH=7
+
+# Google OAuth credentials (extract from the downloaded credentials.json)
+# Find these values in the "installed" section of the JSON file:
+GOOGLE_CLIENT_ID=your_client_id
+GOOGLE_CLIENT_SECRET=your_client_secret
+GOOGLE_PROJECT_ID=your_project_id
+```
+
+**Note:** You can use either the `.env` file with the credentials above, or place the downloaded `credentials.json` file in this directory. The script will prefer environment variables if both are available.
+
+### 4. Run the Script
 
 ```bash
 python fetch_calendar.py

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Google Calendar Event Fetcher
-Fetches events from all user calendars for the next 7 days
+Fetches events from all user calendars for a configurable number of days
 and formats them according to the specified JSON structure.
 """
 
@@ -252,13 +252,13 @@ def process_event(event: Dict) -> List[Dict]:
         return events_list
 
 
-def organize_events_by_days(events: List[Dict], start_date: datetime) -> Dict:
-    """Organize events into the required JSON structure for the next 7 days."""
+def organize_events_by_days(events: List[Dict], start_date: datetime, num_days: int) -> Dict:
+    """Organize events into the required JSON structure for the specified number of days."""
     week_start = start_date
-    week_end = week_start + timedelta(days=6)
+    week_end = week_start + timedelta(days=num_days - 1)
     
     days = []
-    for day_offset in range(7):
+    for day_offset in range(num_days):
         current_date = week_start + timedelta(days=day_offset)
         date_str = current_date.strftime('%Y-%m-%d')
         weekday = current_date.strftime('%A')
@@ -291,6 +291,15 @@ def organize_events_by_days(events: List[Dict], start_date: datetime) -> Dict:
 
 def main():
     """Main function to fetch and process calendar events."""
+    # Get number of days from environment variable
+    days_to_fetch = os.getenv('DAYS_TO_FETCH')
+    if not days_to_fetch:
+        raise ValueError(
+            "DAYS_TO_FETCH environment variable is required. "
+            "Please set it in your .env file (e.g., DAYS_TO_FETCH=7)"
+        )
+    num_days = int(days_to_fetch)
+    
     print("Authenticating with Google Calendar API...")
     service = get_calendar_service()
     
@@ -299,9 +308,9 @@ def main():
     print(f"Found {len(calendars)} calendar(s)")
     
     today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-    seven_days_later = today + timedelta(days=6)
+    end_date = today + timedelta(days=num_days - 1)
     
-    print(f"\nFetching events from {today.strftime('%Y-%m-%d')} to {seven_days_later.strftime('%Y-%m-%d')} (7 days)...")
+    print(f"\nFetching events from {today.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')} ({num_days} days)...")
     print("Fetching events from all calendars...")
     
     all_raw_events = []
@@ -310,7 +319,7 @@ def main():
         calendar_name = calendar.get('summary', 'Unnamed Calendar')
         print(f"  - {calendar_name} ({calendar_id})")
         
-        events = fetch_calendar_events(service, calendar_id, calendar_name, today, seven_days_later)
+        events = fetch_calendar_events(service, calendar_id, calendar_name, today, end_date)
         all_raw_events.extend(events)
         print(f"    Found {len(events)} event(s)")
     
@@ -322,7 +331,7 @@ def main():
         if processed_list:
             processed_events.extend(processed_list)
     
-    result = organize_events_by_days(processed_events, today)
+    result = organize_events_by_days(processed_events, today, num_days)
     
     output_file = 'calendar_events.json'
     with open(output_file, 'w', encoding='utf-8') as f:
